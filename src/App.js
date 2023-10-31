@@ -10,6 +10,16 @@ import About from './About'
 import Footer from './Footer'
 
 const App = () => {
+  const [search, setSearch] = useState('')
+  const [post, setPost] = useState([
+    {
+      id: 1,
+      title: "Rocco",
+      date: 'July 01, 2021 11:12:36 AM',
+      body: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio cumque quo, neque quas quaerat vel perspiciatis! Dolorum, consectetur! Veniam doloremque quidem quam recusandae beatae sint.'
+    }
+  ])
+  const [searchResult, setSearchResult] = useState([])
   return (
     <div className='App'>
       <Header title='DLT Student Blog' />
