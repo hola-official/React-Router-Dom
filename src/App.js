@@ -12,13 +12,15 @@ import Footer from './Footer'
 const App = () => {
   return (
     <div className='App'>
-      <Header />
+      <Header title='DLT Student Blog' />
       <Nav />
-      <Home />
-      <NewPost />
-      <PostPage />
-      <Missing />
-      <About />
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/post' element={<NewPost />} />
+        <Route path='/post/:id' element={<PostPage />} />
+        <Route path='/about' element={<About />} />
+        <Route path='*' element={<Missing />} />
+      </Routes>
       <Footer />
     </div>
   )
