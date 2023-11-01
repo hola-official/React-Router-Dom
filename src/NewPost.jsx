@@ -1,6 +1,4 @@
-import React from 'react'
-
-const NewPost = () => {
+const NewPost = ({postTitle, postBody, setPostTitle, setPostBody, handleSumit}) => {
   return (
     <div>
       Newpost

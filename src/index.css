@@ -9,7 +9,7 @@
 
 html {
   font-size: 16px;
-  /* font-family: "Chakra Petch", sans-serif; */
+  font-family: "Chakra Petch", sans-serif;
 }
 
 body {
@@ -51,6 +51,7 @@ body {
 }
 
 .Header h1 {
+  font-family: "Chakra Petch", sans-serif;
   font-size: 1.5rem;
 }
 
@@ -67,6 +68,7 @@ body {
 .Nav {
   width: 100%;
   background-color: #333;
+  font-family: "Chakra Petch", sans-serif;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;

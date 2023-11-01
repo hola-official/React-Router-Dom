@@ -9,10 +9,14 @@ import About from "./About";
 import HomeLayout from "./HomeLayout";
 
 const App = () => {
-  const [search, setSearch] = useState("");
-  const handleDelete = () => {
-    
+  const navigate = useNavigate()
+
+  const handleDelete = (id) => {
+    const postLists = posts.filter(post => post.id !== id)
+    setPosts(postLists);
+    navigate('/')
   }
+ 
   const [posts, setPosts] = useState([
     {
       id: 1,
@@ -39,13 +43,26 @@ const App = () => {
       body: " Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae impedit enim distinctio asperiores, magnam maiores quaerat consectetur voluptatem vel dolores ipsum sed. Illum, aut quo?",
     },
   ]);
+  const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
+  const [postTitle, setPostTitle] = useState('')
+  const [postBody, setPostBody] = useState('')
+  
+  const handleSubmit = () => {
+
+  }
   return (
     <Routes>
       <Route path="" element={<HomeLayout />}>
         <Route index element={<Home posts={posts} />} />
         <Route path="/post" >
-        <Route index element={<NewPost />}/>
+          <Route index element={<NewPost 
+          postTitle={postTitle}
+          setPostTitle={setPostTitle}
+          postBody={postBody}
+          setPostBody={setPostBody}
+          handleSumit={handleSubmit}
+          />} />
           <Route path=":id" element={<PostPage posts={posts} handleDelete={handleDelete} />} />
         </Route>
         <Route path="/about" element={<About />} />
