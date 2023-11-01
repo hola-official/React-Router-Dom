@@ -13,8 +13,8 @@ const Nav = ({ search, setSearch }) => {
 
             <ul>
                 <li><NavLink to='/'>Home</NavLink></li>
-                <li><NavLink to='/about'>About</NavLink></li>
                 <li><NavLink to='/post'>Post</NavLink></li>
+                <li><NavLink to='/about'>About</NavLink></li>
             </ul>
         </nav>
     )
