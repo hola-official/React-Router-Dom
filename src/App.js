@@ -10,7 +10,7 @@ import HomeLayout from "./HomeLayout";
 
 const App = () => {
   const [search, setSearch] = useState("");
-  const [post, setPost] = useState([
+  const [posts, setPosts] = useState([
     {
       id: 1,
       title: "Rocco",
@@ -40,7 +40,7 @@ const App = () => {
   return (
     <Routes>
       <Route path="" element={<HomeLayout />}>
-        <Route index element={<Home />} />
+        <Route index element={<Home posts={posts} />} />
         <Route path="/post" element={<NewPost />}>
           <Route path=":id" element={<PostPage />} />
         </Route>
