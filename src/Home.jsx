@@ -1,14 +1,16 @@
-import React from 'react'
 import Feed from './Feed'
 
-const Home = ({ posts }) => {
+const Home = ({ posts, isLoading, fetchError }) => {
   return (
     <main className='Home'>
-      {posts.length ? (
-        <Feed posts={posts} />
-      ) : (
-        <p style={{ marginTop: "2rem" }}>Nothing To Display</p>
-      )}
+        {isLoading && <p style={{ display: "grid", placeContent: "center" }}>Loading Posts...</p>}
+        {fetchError && <p style={{ color: "red" }}>{`Error: ${fetchError}`}</p>}
+        {!fetchError && !isLoading &&
+        (posts.length ? (
+          <Feed posts={ posts }/>
+        ) : (
+          <p style={{marginTop: "2rem"}}>Nothing to Display</p>
+        ) )}
     </main>
   )
 }

@@ -1,78 +1,104 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
-import { useState, useEffect } from "react";
+
 import Home from "./Home";
 import NewPost from "./NewPost";
 import PostPage from "./PostPage";
 import Missing from "./Missing";
 import About from "./About";
 import HomeLayout from "./HomeLayout";
+import apiRequest from "./apiRequest";
 
 const App = () => {
+  const API_URL = "http://localhost:3400/articles";
+  const [posts, setPosts] = useState([]);
+  const [searchResult, setSearchResult] = useState([]);
+  const [search, setSearch] = useState("");
+  const [postTitle, setPostTitle] = useState("");
+  const [postBody, setPostBody] = useState("");
+  const [fetchError, setFetchError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const response = await fetch(API_URL);
+        if (!response.ok) throw Error("Did not receive expected data");
+        const listItems = await response.json();
+        // console.log(listItems);
+        setPosts(listItems);
+      } catch (err) {
+        setFetchError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    setTimeout(() => {
+      (async () => fetchItems())();
+    }, 2000);
+  }, []);
+
+  useEffect(() => {
+    const filterResult = posts.filter(
+      (post) =>
+        post.body.toLowerCase().includes(search.toLowerCase()) ||
+        post.title.toLowerCase().includes(search.toLowerCase())
+    );
+    setSearchResult(filterResult.reverse());
+  }, [posts, search]);
+
   const navigate = useNavigate();
 
-  const handleDelete = (id) => {
-    const postLists = posts.filter((post) => post.id !== id);
-    setPosts(postLists);
+  const handleDelete = async (id) => {
+    const postList = posts.filter((post) => post.id !== id);
+    setPosts(postList);
+    const deleteOptions = { method: "DELETE" };
+    const reqUrl = `${API_URL}/${id}`;
+    const result = await apiRequest(reqUrl, deleteOptions);
+    if (result) setFetchError(result);
     navigate("/");
   };
 
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      title: "Rocco",
-      date: "July 01, 2021 11:12:36 AM",
-      body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio cumque quo, neque quas quaerat vel perspiciatis! Dolorum, consectetur! Veniam doloremque quidem quam recusandae beatae sint.",
-    },
-    {
-      id: 2,
-      title: "Kanas",
-      date: "June 19, 2021 12:12:36 AM",
-      body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum, dolore! Maxime itaque voluptas commodi voluptatum quam non, veniam quae incidunt, veritatis amet vitae adipisci inventore.",
-    },
-    {
-      id: 3,
-      title: "Muhammad",
-      date: "September 21, 2026 12:19:36 AM",
-      body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Corrupti perspiciatis laudantium architecto quis harum nobis ut reiciendis recusandae illo nostrum impedit labore earum, omnis non?",
-    },
-    {
-      id: 4,
-      title: "Muaz",
-      date: "August 03, 2025 13:34:50 PM",
-      body: " Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae impedit enim distinctio asperiores, magnam maiores quaerat consectetur voluptatem vel dolores ipsum sed. Illum, aut quo?",
-    },
-  ]);
-  const [search, setSearch] = useState("");
-  const [searchResult, setSearchResult] = useState([]);
-  const [postTitle, setPostTitle] = useState("");
-  const [postBody, setPostBody] = useState("");
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const id = posts.length ? posts[posts.length - 1].id + 1 : 1;
     const date = format(new Date(), "MMMM dd, yyyy pp");
     const newPost = { id, title: postTitle, date, body: postBody };
-    const allPost = [...posts, newPost]
+    const allPost = [...posts, newPost];
     setPosts(allPost);
-    setPostTitle('');
-    setPostBody('')
-    navigate('/')
+
+    const postOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newPost),
+    };
+    const result = await apiRequest(API_URL, postOptions);
+    if (result) setFetchError(result);
+    setPostTitle("");
+    setPostBody("");
+    navigate("/");
   };
-
-  useEffect(() => {
-    const filterResult = posts.filter(post => post.body.toLowerCase().includes(search.toLowerCase()) 
-    || 
-    post.title.toLowerCase().includes(search.toLowerCase()))
-
-    setSearchResult(filterResult.reverse());
-  }, [posts, search])
 
   return (
     <Routes>
-      <Route path="" element={<HomeLayout search={search} setSearch={setSearch} />}>
-        <Route index element={<Home posts={searchResult} />} />
+      <Route
+        path="/"
+        element={<HomeLayout search={search} setSearch={setSearch} />}
+      >
+        <Route
+          index
+          element={
+            <Home
+              posts={searchResult}
+              isLoading={isLoading}
+              fetchError={fetchError}
+            />
+          }
+        />
         <Route path="/post">
           <Route
             index
@@ -82,7 +108,7 @@ const App = () => {
                 setPostTitle={setPostTitle}
                 postBody={postBody}
                 setPostBody={setPostBody}
-                handleSumit={handleSubmit}
+                handleSubmit={handleSubmit}
               />
             }
           />
